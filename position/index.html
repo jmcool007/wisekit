@@ -4,31 +4,31 @@
 <title>仓位与强平价计算 · 合约工具箱</title>
 <meta name="description" content="按"每笔最多亏多少"反推合约仓位、所需杠杆，并估算逐仓强平价离止损有多远。">
 <meta name="theme-color" content="#0d1726">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230b7a75'/><g fill='%23fff'><rect x='6' y='11' width='5' height='9' rx='1'/><rect x='13.5' y='15' width='5' height='8' rx='1'/><rect x='21' y='8' width='5' height='9' rx='1'/></g></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23ea580c'/><g fill='%23fff'><rect x='6' y='11' width='5' height='9' rx='1'/><rect x='13.5' y='15' width='5' height='8' rx='1'/><rect x='21' y='8' width='5' height='9' rx='1'/></g></svg>">
 <style>
 :root{
   --bg:#f4f6f9; --panel:#ffffff; --ink:#0f1b2d; --muted:#5b6b7f; --faint:#8794a6; --line:#e3e8ef; --line2:#cfd7e2;
-  --accent:#0b7a75; --accent-2:#0d9488; --accent-soft:#e2f3f1; --on-accent:#ffffff;
+  --accent:#c2410c; --accent-2:#ea580c; --accent-soft:#fff1e6; --on-accent:#ffffff;
   --top:#0d1726; --top-ink:#e8eef6; --top-muted:#9fb0c4;
-  --warn:#b4530b; --bad:#c0261a; --good:#15803d;
-  --c1:#0b7a75; --c2:#5aa9b0; --c3:#c27b2c; --c4:#e0a85e; --c5:#7b6fb0;
+  --warn:#a16207; --bad:#c0261a; --good:#15803d;
+  --c1:#c2410c; --c2:#fb923c; --c3:#2563eb; --c4:#93c5fd; --c5:#7b6fb0;
   --shadow:0 1px 2px rgba(15,27,45,.05),0 6px 20px rgba(15,27,45,.05);
   --sans:system-ui,-apple-system,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif;
   --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0b1118; --panel:#121b25; --ink:#e6edf3; --muted:#97a6b7; --faint:#6f7f92; --line:#223040; --line2:#2e3f52;
-  --accent:#3cc4bd; --accent-2:#2bb3ac; --accent-soft:#12312f; --on-accent:#06201e;
+  --accent:#fb923c; --accent-2:#f97316; --accent-soft:#3a1f0e; --on-accent:#1f0d02;
   --top:#070c12; --top-ink:#e6edf3; --top-muted:#8fa0b3;
-  --warn:#e7a35a; --bad:#f07a6e; --good:#5cc98a;
-  --c1:#3cc4bd; --c2:#2f8b93; --c3:#e7a35a; --c4:#b9813f; --c5:#a89be0;
+  --warn:#facc15; --bad:#f07a6e; --good:#5cc98a;
+  --c1:#fb923c; --c2:#c2410c; --c3:#60a5fa; --c4:#1d4ed8; --c5:#a89be0;
   --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0b1118; --panel:#121b25; --ink:#e6edf3; --muted:#97a6b7; --faint:#6f7f92; --line:#223040; --line2:#2e3f52;
-  --accent:#3cc4bd; --accent-2:#2bb3ac; --accent-soft:#12312f; --on-accent:#06201e;
+  --accent:#fb923c; --accent-2:#f97316; --accent-soft:#3a1f0e; --on-accent:#1f0d02;
   --top:#070c12; --top-ink:#e6edf3; --top-muted:#8fa0b3;
-  --warn:#e7a35a; --bad:#f07a6e; --good:#5cc98a;
-  --c1:#3cc4bd; --c2:#2f8b93; --c3:#e7a35a; --c4:#b9813f; --c5:#a89be0;
+  --warn:#facc15; --bad:#f07a6e; --good:#5cc98a;
+  --c1:#fb923c; --c2:#c2410c; --c3:#60a5fa; --c4:#1d4ed8; --c5:#a89be0;
   --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -42,7 +42,7 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stro
 .top{background:var(--top);color:var(--top-ink);position:sticky;top:0;z-index:10;border-bottom:1px solid rgba(255,255,255,.06)}
 .top .in{display:flex;align-items:center;gap:16px;height:56px}
 .logo{display:flex;align-items:center;gap:10px;color:var(--top-ink);text-decoration:none;font-weight:700;font-size:16px;letter-spacing:.02em;white-space:nowrap}
-.logo .mk{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#14b8a6,#0b7a75);display:grid;place-items:center;flex:none}
+.logo .mk{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#fb923c,#ea580c);display:grid;place-items:center;flex:none}
 .logo .mk svg{width:18px;height:18px}
 .logo small{font-weight:500;color:var(--top-muted);font-size:12px;letter-spacing:0}
 .top nav{margin-left:auto;display:flex;gap:4px}
@@ -120,16 +120,16 @@ tr:last-child td{border-bottom:0}
 .homehero{position:relative;overflow:hidden;background:var(--top);color:var(--top-ink)}
 .homehero .in{padding-top:44px;padding-bottom:40px}
 .homehero::before{content:"";position:absolute;inset:0;opacity:.5;background:
-  radial-gradient(600px 260px at 85% 0%,rgba(20,184,166,.35),transparent 70%),
+  radial-gradient(600px 260px at 85% 0%,rgba(249,115,22,.32),transparent 70%),
   linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px) 0 0/100% 32px,
   linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px) 0 0/32px 100%}
 .homehero .in{position:relative}
-.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:#5eead4;letter-spacing:.08em;font-weight:600;margin-bottom:12px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:#fdba74;letter-spacing:.08em;font-weight:600;margin-bottom:12px}
 .homehero h1{font-size:clamp(28px,4.6vw,44px);line-height:1.15;margin:0;letter-spacing:.01em;text-wrap:balance}
 .homehero p{color:var(--top-muted);max-width:60ch;margin:14px 0 0;font-size:16px}
 .badges{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:22px;font-size:13.5px;color:var(--top-ink)}
 .badges span{display:inline-flex;align-items:center;gap:7px}
-.badges svg.i{width:16px;height:16px;color:#5eead4;stroke-width:2.2}
+.badges svg.i{width:16px;height:16px;color:#fdba74;stroke-width:2.2}
 .sec{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:6px 0 -6px}
 .sec h2{font-size:18px;margin:0}
 .sec span{color:var(--faint);font-size:13px}
