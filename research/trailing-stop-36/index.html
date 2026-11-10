@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>&quot;让利润奔跑&quot;在我的数据里不成立：放宽移动止损 36 组，全部更差 · WiseKit 研究</title>
+<meta name="description" content="用实盘 933 笔做反事实回放：调初始止损、放宽移动止损 1.5~6 倍、两两交叉共 36 组，没有一组扭亏，放宽 3 倍时多亏约三分之一。">
+<meta name="theme-color" content="#0d1726">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23ea580c'/><g fill='%23fff'><rect x='6' y='11' width='5' height='9' rx='1'/><rect x='13.5' y='15' width='5' height='8' rx='1'/><rect x='21' y='8' width='5' height='9' rx='1'/></g></svg>">
+<style>
+:root{
+  --bg:#f4f6f9; --panel:#ffffff; --ink:#0f1b2d; --muted:#5b6b7f; --faint:#8794a6; --line:#e3e8ef; --line2:#cfd7e2;
+  --accent:#c2410c; --accent-2:#ea580c; --accent-soft:#fff1e6; --on-accent:#ffffff;
+  --top:#0d1726; --top-ink:#e8eef6; --top-muted:#9fb0c4;
+  --warn:#a16207; --bad:#c0261a; --good:#15803d;
+  --c1:#c2410c; --c2:#fb923c; --c3:#2563eb; --c4:#93c5fd; --c5:#7b6fb0;
+  --shadow:0 1px 2px rgba(15,27,45,.05),0 6px 20px rgba(15,27,45,.05);
+  --sans:system-ui,-apple-system,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0b1118; --panel:#121b25; --ink:#e6edf3; --muted:#97a6b7; --faint:#6f7f92; --line:#223040; --line2:#2e3f52;
+  --accent:#fb923c; --accent-2:#f97316; --accent-soft:#3a1f0e; --on-accent:#1f0d02;
+  --top:#070c12; --top-ink:#e6edf3; --top-muted:#8fa0b3;
+  --warn:#facc15; --bad:#f07a6e; --good:#5cc98a;
+  --c1:#fb923c; --c2:#c2410c; --c3:#60a5fa; --c4:#1d4ed8; --c5:#a89be0;
+  --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b1118; --panel:#121b25; --ink:#e6edf3; --muted:#97a6b7; --faint:#6f7f92; --line:#223040; --line2:#2e3f52;
+  --accent:#fb923c; --accent-2:#f97316; --accent-soft:#3a1f0e; --on-accent:#1f0d02;
+  --top:#070c12; --top-ink:#e6edf3; --top-muted:#8fa0b3;
+  --warn:#facc15; --bad:#f07a6e; --good:#5cc98a;
+  --c1:#fb923c; --c2:#c2410c; --c3:#60a5fa; --c4:#1d4ed8; --c5:#a89be0;
+  --shadow:0 1px 2px rgba(0,0,0,.3); color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.in{max-width:1120px;margin:0 auto}
+
+/* 顶栏 */
+.top{background:var(--top);color:var(--top-ink);position:sticky;top:0;z-index:10;border-bottom:1px solid rgba(255,255,255,.06)}
+.top .in{display:flex;align-items:center;gap:16px;height:56px}
+.logo{display:flex;align-items:center;gap:10px;color:var(--top-ink);text-decoration:none;font-weight:700;font-size:16px;letter-spacing:.02em;white-space:nowrap}
+.logo .mk{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#fb923c,#ea580c);display:grid;place-items:center;flex:none}
+.logo .mk svg{width:18px;height:18px}
+.logo small{font-weight:500;color:var(--top-muted);font-size:12px;letter-spacing:0}
+.top nav{margin-left:auto;display:flex;gap:4px}
+.top nav a{color:var(--top-muted);text-decoration:none;font-size:14px;padding:6px 10px;border-radius:7px;white-space:nowrap}
+.top nav a:hover{color:var(--top-ink);background:rgba(255,255,255,.07)}
+@media (max-width:560px){.logo small{display:none}.top nav a{padding:6px 8px;font-size:13.5px}}
+
+/* 主体 */
+.wrap{max-width:1152px;margin:0 auto;display:grid;gap:22px;padding-top:26px;padding-bottom:44px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.crumb{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:var(--faint);margin-bottom:12px}
+.crumb a{color:var(--muted);text-decoration:none}
+.crumb a:hover{color:var(--accent)}
+.phead .ph{display:flex;gap:16px;align-items:flex-start}
+.ico{width:46px;height:46px;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex:none}
+.ico svg.i{width:24px;height:24px}
+.phead h1{font-size:clamp(22px,3.2vw,30px);line-height:1.25;margin:2px 0 0;letter-spacing:.01em;text-wrap:balance}
+.phead p{margin:8px 0 0;color:var(--muted);max-width:68ch}
+@media (max-width:560px){.phead .ico{width:40px;height:40px;border-radius:10px}.phead .ph{gap:12px}}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);gap:22px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px;box-shadow:var(--shadow);min-width:0}
+@media (max-width:560px){.panel{padding:16px}}
+.panel > h2{display:flex;align-items:center;gap:8px;font-size:12.5px;letter-spacing:.12em;color:var(--muted);margin:0 0 16px;font-weight:700}
+.panel > h2::before{content:"";width:6px;height:6px;border-radius:2px;background:var(--accent)}
+.grid > section.panel{border-top:3px solid var(--accent)}
+
+fieldset{border:0;margin:0 0 18px;padding:0 0 18px;display:grid;gap:12px;border-bottom:1px solid var(--line)}
+fieldset:last-child{margin-bottom:0;padding-bottom:0;border-bottom:0}
+legend{font-weight:650;font-size:14px;margin-bottom:10px;padding:0;color:var(--ink)}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 140px;gap:12px;align-items:center}
+.row label{color:var(--ink);font-size:14px}
+.row small{display:block;color:var(--faint);font-size:12px;line-height:1.45;margin-top:1px}
+input[type=number],select{width:100%;height:38px;font:inherit;font-family:var(--mono);font-size:14.5px;padding:0 11px;border:1px solid var(--line2);border-radius:8px;background:var(--panel);color:var(--ink);text-align:right;font-variant-numeric:tabular-nums;transition:border-color .15s,box-shadow .15s}
+select{text-align:left;font-family:var(--sans);font-size:14px;padding-right:6px}
+input[type=number]:hover,select:hover{border-color:var(--faint)}
+input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.check{display:flex;gap:8px;align-items:center;font-size:14px}
+.check input{accent-color:var(--accent);width:16px;height:16px}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.presets button{font:inherit;font-size:13px;padding:6px 13px;border-radius:999px;border:1px solid var(--line2);background:var(--panel);color:var(--muted);cursor:pointer}
+.presets button:hover{border-color:var(--accent);color:var(--accent)}
+.presets button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+
+.hero{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;background:var(--accent-soft);border-radius:12px;padding:16px 18px 14px;margin-bottom:16px}
+.hero .big{font-family:var(--mono);font-size:clamp(38px,6.4vw,52px);font-weight:650;line-height:1.05;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.hero .unit{font-family:var(--sans);color:var(--muted);font-size:14px}
+.hero .sub{flex-basis:100%;color:var(--muted);font-size:13.5px;margin-top:2px}
+.bar{display:flex;height:12px;border-radius:999px;overflow:hidden;background:var(--line);margin:4px 0 10px}
+.bar span{display:block;height:100%}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:4px 14px;font-size:13px;margin-bottom:16px}
+.legend div{display:flex;gap:7px;align-items:center;min-width:0}
+.legend i{width:10px;height:10px;border-radius:3px;flex:none}
+.legend b{font-family:var(--mono);font-weight:400;margin-left:auto;font-variant-numeric:tabular-nums}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:10px 0;border-bottom:1px solid var(--line);vertical-align:top}
+td:last-child{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;padding-left:12px;font-weight:500}
+td small{display:block;color:var(--faint);font-size:12px;font-family:var(--sans);font-weight:400}
+tr:last-child td{border-bottom:0}
+.pill{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;margin-left:6px;font-family:var(--sans);font-weight:600;vertical-align:1px}
+.ok{background:color-mix(in srgb,var(--good) 14%,transparent);color:var(--good)}
+.mid{background:color-mix(in srgb,var(--warn) 14%,transparent);color:var(--warn)}
+.hi{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad)}
+.note{font-size:13.5px;color:var(--muted);background:var(--bg);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:11px 14px;margin-top:16px}
+.note strong{color:var(--ink)}
+
+/* 计算说明（页面里的 footer） */
+.method{display:flex;gap:12px;align-items:flex-start;color:var(--muted);font-size:13px;line-height:1.65;background:var(--panel);border:1px dashed var(--line2);border-radius:12px;padding:14px 16px}
+.method svg.i{width:18px;height:18px;color:var(--faint);margin-top:2px}
+.method b{color:var(--ink);font-weight:650}
+
+/* 首页 */
+.homehero{position:relative;overflow:hidden;background:var(--top);color:var(--top-ink)}
+.homehero .in{padding-top:44px;padding-bottom:40px}
+.homehero::before{content:"";position:absolute;inset:0;opacity:.5;background:
+  radial-gradient(600px 260px at 85% 0%,rgba(249,115,22,.32),transparent 70%),
+  linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px) 0 0/100% 32px,
+  linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px) 0 0/32px 100%}
+.homehero .in{position:relative}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:#fdba74;letter-spacing:.08em;font-weight:600;margin-bottom:12px}
+.homehero h1{font-size:clamp(28px,4.6vw,44px);line-height:1.15;margin:0;letter-spacing:.01em;text-wrap:balance}
+.homehero p{color:var(--top-muted);max-width:60ch;margin:14px 0 0;font-size:16px}
+.badges{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:22px;font-size:13.5px;color:var(--top-ink)}
+.badges span{display:inline-flex;align-items:center;gap:7px}
+.badges svg.i{width:16px;height:16px;color:#fdba74;stroke-width:2.2}
+.sec{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:6px 0 -6px}
+.sec h2{font-size:18px;margin:0}
+.sec span{color:var(--faint);font-size:13px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 12px;align-content:start;text-decoration:none;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);transition:border-color .15s,transform .15s,box-shadow .15s}
+.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 10px 28px rgba(15,27,45,.09)}
+.card .ico{width:40px;height:40px;border-radius:10px}
+.card .ico svg.i{width:22px;height:22px}
+.card b{font-size:15.5px;line-height:1.35;align-self:center}
+.card span.d{grid-column:1/-1;color:var(--muted);font-size:13.5px;line-height:1.6}
+.cards.adv .ico{background:color-mix(in srgb,var(--c5) 14%,transparent);color:var(--c5)}
+@media (prefers-reduced-motion:reduce){.card,.card:hover{transition:none;transform:none}}
+
+/* 支持作者 */
+.support > p{margin:-6px 0 16px;color:var(--muted);font-size:14px;max-width:72ch}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.scard{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--bg);display:grid;gap:9px;align-content:start;min-width:0}
+.scard b{font-size:14.5px}
+.scard small{color:var(--muted);font-size:12.5px;line-height:1.55}
+.scard .acts{display:flex;flex-wrap:wrap;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:13.5px;background:var(--accent);color:var(--on-accent);text-decoration:none;padding:8px 14px;border-radius:8px;font-weight:600;border:1px solid var(--accent);cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--accent)}
+.addr{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;font-size:13px}
+.addr code{font-family:var(--mono);font-size:12px;overflow-wrap:anywhere;color:var(--ink)}
+.addr button{font:inherit;font-size:12px;padding:4px 10px;border-radius:7px;border:1px solid var(--line2);background:var(--panel);color:var(--ink);cursor:pointer}
+.addr button:hover{border-color:var(--accent);color:var(--accent)}
+.tag{font-size:11.5px;padding:1px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap;font-weight:600}
+[hidden]{display:none!important}
+@media (max-width:520px){.addr{grid-template-columns:minmax(0,1fr) auto}.addr .tag{grid-column:1/-1;justify-self:start}}
+
+/* 站点页脚 */
+.sitefoot{background:var(--panel);border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+.sitefoot .in{display:grid;grid-template-columns:1.3fr 1fr 1fr 1.4fr;gap:24px;padding-top:32px;padding-bottom:20px}
+@media (max-width:860px){.sitefoot .in{grid-template-columns:1fr 1fr}}
+.sitefoot h3{font-size:13px;color:var(--ink);margin:0 0 10px;letter-spacing:.04em}
+.sitefoot ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.sitefoot a{color:var(--muted);text-decoration:none}
+.sitefoot a:hover{color:var(--accent)}
+.sitefoot .brandcol .logo{color:var(--ink);margin-bottom:10px}
+.sitefoot p{margin:0 0 8px;line-height:1.65}
+.sitefoot .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:14px;font-size:12px;color:var(--faint)}
+
+/* 研究栏目 */
+.rlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.rcard{display:grid;gap:8px;align-content:start;text-decoration:none;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);transition:border-color .15s,transform .15s}
+.rcard:hover{border-color:var(--accent);transform:translateY(-2px)}
+.rcard .rmeta{font-size:12.5px;color:var(--faint);font-family:var(--mono)}
+.rcard b{font-size:16px;line-height:1.45}
+.rcard .d{color:var(--muted);font-size:13.5px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.sec span a{color:var(--accent);text-decoration:none}
+.wrap.narrow{max-width:832px}
+.phead .ameta{color:var(--faint);font-size:13.5px;margin-top:10px}
+.prose{font-size:16px;line-height:1.85;padding:28px 32px}
+@media (max-width:560px){.prose{padding:18px 16px;font-size:15.5px}}
+.prose h2{font-size:20px;margin:30px 0 10px;padding-top:4px}
+.prose h2:first-child{margin-top:0}
+.prose h3{font-size:17px;margin:22px 0 8px}
+.prose p{margin:0 0 14px}
+.prose ul,.prose ol{margin:0 0 16px;padding-left:1.4em}
+.prose li{margin:4px 0}
+.prose strong{color:var(--ink)}
+.prose blockquote{margin:0 0 14px;padding:8px 14px;border-left:3px solid var(--accent);background:var(--bg);color:var(--muted)}
+.prose .tbl{overflow-x:auto;margin:6px 0 18px;border:1px solid var(--line);border-radius:10px}
+.prose table{font-size:14px;min-width:480px}
+.prose th{text-align:left;background:var(--bg);font-weight:650;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+.prose td{padding:9px 12px;font-weight:400}
+.prose td:last-child{font-family:var(--sans);text-align:left;white-space:normal;padding-left:12px}
+.prose td:not(:first-child){font-variant-numeric:tabular-nums}
+.related{grid-template-columns:auto minmax(0,1fr)}
+.prose > h2{display:block;font-size:20px;letter-spacing:.01em;color:var(--ink);font-weight:700;margin:30px 0 10px}
+.prose > h2:first-child{margin-top:0}
+.prose > h2::before{content:none}
+</style>
+</head><body>
+<header class="top gut"><div class="in"><a class="logo" href="../../"><span class="mk"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M6 4v16M12 7v13M18 3v12"/><rect x="4" y="8" width="4" height="7" rx="1" fill="#fff"/><rect x="10" y="11" width="4" height="6" rx="1" fill="#fff"/><rect x="16" y="5" width="4" height="7" rx="1" fill="#fff"/></svg></span>WiseKit<small>交易与理财计算器</small></a><nav aria-label="站点"><a href="../../#tools">全部工具</a><a href="../../research/">研究</a><a href="#support">支持作者</a></nav></div></header>
+<div class="wrap narrow"><header class="phead"><nav class="crumb" aria-label="位置"><a href="../../">WiseKit</a><span>/</span><a href="../">研究</a><span>/</span><span>&quot;让利润奔跑&quot;在我的数据里不成立：放宽移动止损 36 组，全部更差</span></nav><h1>&quot;让利润奔跑&quot;在我的数据里不成立：放宽移动止损 36 组，全部更差</h1><p class="ameta">2026-11-10 · 约 1 分钟 · 不构成投资建议</p></header><article class="panel prose"><h2>起因</h2>
+<p>很多交易建议都说：截断亏损，让利润奔跑。所以我的实盘程序亏钱时，第一个想法就是止损收紧、移动止损放宽。</p>
+<h2>反事实回放（实盘 933 笔）</h2>
+<ul><li>初始止损从 2.75 倍 ATR 改到 2.5、2.0、1.5、1.0 倍：没有一个让策略盈利；</li><li>移动止损放宽 1.5 倍、2 倍、3 倍到 6 倍，关掉快速跟踪层，再和不同初始止损两两交叉，一共 36 组：没有一组扭亏，也没有一组稳定好于现状；</li><li>放得越宽越差，放宽 3 倍时多亏了约三分之一。</li></ul>
+<h2>原因</h2>
+<p>盈利单本来就走不远（见《胜率 72.5%，为什么还是亏钱？》）。行情没有趋势延续性的时候，放宽移动止损只是把本来能保住的那点利润再吐回去。</p>
+<p>"让利润奔跑"有一个前提：你的入场方向确实能抓到趋势。这个前提不成立，出场怎么调都没用。</p>
+<h2>教训</h2>
+<p>调出场参数是成本最低、最容易让人上瘾的优化。每调一次回测都会变一点，感觉像在进步，其实大多是在拟合噪声。先确认入场有没有优势，再谈出场。</p></article><a class="card related" href="../../expectancy/"><span class="ico"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 4H6l6.5 8L6 20h12"/></svg></span><b>相关工具：策略期望值检查</b><span class="d">胜率 72.5% 为什么还亏？看每笔期望和保本胜率。</span></a><div class="sec"><h2>更多研究</h2><span><a href="../">全部 →</a></span></div><div class="rlist"><a class="rcard" href="../../research/pump-dump/"><span class="rmeta">2026-11-10 · 约 2 分钟</span><b>暴涨 30%、暴跌 25% 之后：币安永续 2022 年以来的统计</b><span class="d">单日涨幅 ≥30% 出现过 2378 次，7 天后中位数 −14.1%；单日跌幅 ≥25% 出现过 1483 次，之后基本没有方向。追涨大概率吃亏，但两头的尾部都很宽。</span></a><a class="rcard" href="../../research/44k-configs/"><span class="rmeta">2026-11-10 · 约 1 分钟</span><b>测了 4 万多个合约策略配置，能上实盘的：0 个</b><span class="d">用 150U 真实资金跑永续合约量化，同时做了大量回测。13 种常见信号、4 万多个配置，三段数据都站得住的一个都没有。</span></a><a class="rcard" href="../../research/winrate-725/"><span class="rmeta">2026-11-10 · 约 1 分钟</span><b>胜率 72.5%，为什么还是亏钱？</b><span class="d">实盘 933 笔，胜率 72.5%，结果是亏的。盈利单平均 +0.17R，亏损单平均 −0.97R，要胜率约 85% 才能保本。</span></a></div><script>
+// 站点配置：留空的项目不会显示。改完运行 tools/deploy.sh。
+const SITE = {
+  refCode: "157987801",
+  refUrl:  "https://www.bsmkweb.net/register?ref=157987801",      // 中文注册
+  refUrl2: "https://accounts.binance.com/register?ref=157987801", // 币安官方域名
+  squareUrl: "",   // 你的币安广场主页链接（关注；1000 粉后可开打赏）
+  payId: "157987801", // 币安 ID，Binance Pay 按 ID 转账（币安用户之间免手续费、秒到）
+  // 链上捐赠地址：务必核对网络，填错网络会丢币
+  addrs: [
+    {net:"USDT · BEP20（BSC）", addr:"0xbf8beefcf96a27c695669da3d146b278db9be805"},
+  ],
+};
+</script>
+<section class="panel support" id="support">
+  <h2>支持作者</h2>
+  <p>这些工具免费、不用注册；你输入的数字只在浏览器里计算，不会上传（网站只用 Cloudflare 匿名统计访问量，不用 cookie）。如果帮到了你，下面几种方式任选，都不强求。</p>
+  <div class="sgrid">
+    <div class="scard" id="sRef">
+      <b>用邀请码注册币安 <span class="tag">作者有返佣</span></b>
+      <small>邀请码 <code id="sRefCode" style="font-family:var(--mono)"></code>。通过此邀请注册，作者会获得平台返佣；对你的费率按平台邀请规则执行。</small>
+      <span class="acts"><a class="btn" id="sRefUrl" target="_blank" rel="noopener">注册（中文）</a><a class="btn ghost" id="sRefUrl2" target="_blank" rel="noopener">Binance.com</a></span>
+    </div>
+    <div class="scard" id="sSquare" hidden>
+      <b>在币安广场关注</b>
+      <small>实盘与回测的研究记录，亏的也照实写。新工具和新研究会先发在这里。</small>
+      <span class="acts"><a class="btn" id="sSquareUrl" target="_blank" rel="noopener">打开主页</a></span>
+    </div>
+    <div class="scard" id="sDonate" hidden>
+      <b>直接捐赠</b>
+      <small>捐赠是自愿赠与，不换取任何服务或承诺。币安用户用 Pay 按 ID 转账最方便（免手续费）；链上转账只支持 BSC（BEP20）网络，选错网络会丢币。</small>
+      <div id="sAddrs" style="display:grid;gap:8px"></div>
+    </div>
+  </div>
+</section>
+<script>
+(()=>{const S=SITE, $=id=>document.getElementById(id);
+ if(S.refCode){$("sRefCode").textContent=S.refCode;$("sRefUrl").href=S.refUrl;$("sRefUrl2").href=S.refUrl2;} else $("sRef").hidden=true;
+ if(S.squareUrl){$("sSquareUrl").href=S.squareUrl;$("sSquare").hidden=false;}
+ const rows=[]; if(S.payId) rows.push({net:"币安 ID · Pay 转账",addr:S.payId}); (S.addrs||[]).forEach(a=>a.addr&&rows.push(a));
+ if(!rows.length) return;
+ $("sDonate").hidden=false;
+ $("sAddrs").innerHTML=rows.map((r,i)=>`<div class="addr"><span class="tag">${r.net}</span><code id="a${i}">${r.addr}</code><button type="button" data-i="${i}">复制</button></div>`).join("");
+ $("sAddrs").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return; const el=$("a"+b.dataset.i);
+  const done=()=>{b.textContent="已复制"; setTimeout(()=>b.textContent="复制",1500);};
+  const sel=()=>{const r=document.createRange(); r.selectNodeContents(el); const s=getSelection(); s.removeAllRanges(); s.addRange(r);};
+  try{ navigator.clipboard.writeText(el.textContent).then(done,sel); }catch(_){ sel(); }});
+})();
+</script>
+</div>
+<footer class="sitefoot gut"><div class="in"><div class="brandcol"><a class="logo" href="../../"><span class="mk"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M6 4v16M12 7v13M18 3v12"/><rect x="4" y="8" width="4" height="7" rx="1" fill="#fff"/><rect x="10" y="11" width="4" height="6" rx="1" fill="#fff"/><rect x="16" y="5" width="4" height="7" rx="1" fill="#fff"/></svg></span>WiseKit</a><p>免费的交易与理财计算器。作者是一个把合约量化从回测做到 150U 真实资金实盘的散户，部分默认值来自实盘数据。</p><p><a href="../../research/">研究文章 →</a></p></div><div><h3>常用工具</h3><ul><li><a href="../../pnl/">合约收益计算器</a></li><li><a href="../../liq/">杠杆爆仓速查</a></li><li><a href="../../position/">仓位与强平价计算</a></li><li><a href="../../avgprice/">补仓均价与保本价</a></li><li><a href="../../funding/">资金费率换算</a></li><li><a href="../../earn/">理财收益计算</a></li><li><a href="../../drawdown/">回撤恢复计算</a></li></ul></div><div><h3>进阶</h3><ul><li><a href="../../cost/">合约真实成本计算器</a></li><li><a href="../../expectancy/">策略期望值检查</a></li><li><a href="../../overfit/">回测过拟合检查</a></li><li><a href="../../concentration/">同向持仓集中度</a></li></ul></div><div><h3>说明</h3><p>所有计算在你的浏览器里完成，输入的数字不会上传；网站只用 Cloudflare 匿名统计访问量，不用 cookie。</p><p>页面中的币安注册链接为作者邀请链接，作者会获得平台返佣。</p></div><div class="legal">工具结果仅为估算，以交易所页面显示为准。合约交易风险很高，可能损失全部保证金。本站内容不构成投资建议。</div></div></footer>
+<script>addEventListener('load',function(){try{var s=document.createElement('script');s.async=true;s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon',"{\"token\": \"23b9622e268741f6908670e760f0bd26\"}");document.body.appendChild(s);}catch(e){}});</script>
+</body></html>

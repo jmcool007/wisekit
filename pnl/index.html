@@ -172,9 +172,40 @@ tr:last-child td{border-bottom:0}
 .sitefoot .brandcol .logo{color:var(--ink);margin-bottom:10px}
 .sitefoot p{margin:0 0 8px;line-height:1.65}
 .sitefoot .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:14px;font-size:12px;color:var(--faint)}
+
+/* 研究栏目 */
+.rlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.rcard{display:grid;gap:8px;align-content:start;text-decoration:none;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);transition:border-color .15s,transform .15s}
+.rcard:hover{border-color:var(--accent);transform:translateY(-2px)}
+.rcard .rmeta{font-size:12.5px;color:var(--faint);font-family:var(--mono)}
+.rcard b{font-size:16px;line-height:1.45}
+.rcard .d{color:var(--muted);font-size:13.5px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.sec span a{color:var(--accent);text-decoration:none}
+.wrap.narrow{max-width:832px}
+.phead .ameta{color:var(--faint);font-size:13.5px;margin-top:10px}
+.prose{font-size:16px;line-height:1.85;padding:28px 32px}
+@media (max-width:560px){.prose{padding:18px 16px;font-size:15.5px}}
+.prose h2{font-size:20px;margin:30px 0 10px;padding-top:4px}
+.prose h2:first-child{margin-top:0}
+.prose h3{font-size:17px;margin:22px 0 8px}
+.prose p{margin:0 0 14px}
+.prose ul,.prose ol{margin:0 0 16px;padding-left:1.4em}
+.prose li{margin:4px 0}
+.prose strong{color:var(--ink)}
+.prose blockquote{margin:0 0 14px;padding:8px 14px;border-left:3px solid var(--accent);background:var(--bg);color:var(--muted)}
+.prose .tbl{overflow-x:auto;margin:6px 0 18px;border:1px solid var(--line);border-radius:10px}
+.prose table{font-size:14px;min-width:480px}
+.prose th{text-align:left;background:var(--bg);font-weight:650;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+.prose td{padding:9px 12px;font-weight:400}
+.prose td:last-child{font-family:var(--sans);text-align:left;white-space:normal;padding-left:12px}
+.prose td:not(:first-child){font-variant-numeric:tabular-nums}
+.related{grid-template-columns:auto minmax(0,1fr)}
+.prose > h2{display:block;font-size:20px;letter-spacing:.01em;color:var(--ink);font-weight:700;margin:30px 0 10px}
+.prose > h2:first-child{margin-top:0}
+.prose > h2::before{content:none}
 </style>
 </head><body>
-<header class="top gut"><div class="in"><a class="logo" href="../"><span class="mk"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M6 4v16M12 7v13M18 3v12"/><rect x="4" y="8" width="4" height="7" rx="1" fill="#fff"/><rect x="10" y="11" width="4" height="6" rx="1" fill="#fff"/><rect x="16" y="5" width="4" height="7" rx="1" fill="#fff"/></svg></span>WiseKit<small>交易与理财计算器</small></a><nav aria-label="站点"><a href="../#tools">全部工具</a><a href="#support">支持作者</a></nav></div></header>
+<header class="top gut"><div class="in"><a class="logo" href="../"><span class="mk"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M6 4v16M12 7v13M18 3v12"/><rect x="4" y="8" width="4" height="7" rx="1" fill="#fff"/><rect x="10" y="11" width="4" height="6" rx="1" fill="#fff"/><rect x="16" y="5" width="4" height="7" rx="1" fill="#fff"/></svg></span>WiseKit<small>交易与理财计算器</small></a><nav aria-label="站点"><a href="../#tools">全部工具</a><a href="../research/">研究</a><a href="#support">支持作者</a></nav></div></header>
 <div class="wrap">
 <header class="phead"><nav class="crumb" aria-label="位置"><a href="../">WiseKit</a><span>/</span><a href="../#tools">常用工具</a><span>/</span><span>合约收益计算器</span></nav><div class="ph"><span class="ico"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg></span><div><h1>合约收益计算器</h1><p>这单能赚多少、亏多少？收益率是多少？想赚 50% 价格要到哪？最多亏 20% 止损该设哪？手续费已经算进去。</p></div></div></header>
 
@@ -309,6 +340,6 @@ $("f").addEventListener("submit",e=>e.preventDefault());
 render();
 </script>
 
-<footer class="sitefoot gut"><div class="in"><div class="brandcol"><a class="logo" href="../"><span class="mk"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M6 4v16M12 7v13M18 3v12"/><rect x="4" y="8" width="4" height="7" rx="1" fill="#fff"/><rect x="10" y="11" width="4" height="6" rx="1" fill="#fff"/><rect x="16" y="5" width="4" height="7" rx="1" fill="#fff"/></svg></span>WiseKit</a><p>免费的交易与理财计算器。作者是一个把合约量化从回测做到 150U 真实资金实盘的散户，部分默认值来自实盘数据。</p></div><div><h3>常用工具</h3><ul><li><a href="../pnl/">合约收益计算器</a></li><li><a href="../liq/">杠杆爆仓速查</a></li><li><a href="../position/">仓位与强平价计算</a></li><li><a href="../avgprice/">补仓均价与保本价</a></li><li><a href="../funding/">资金费率换算</a></li><li><a href="../earn/">理财收益计算</a></li><li><a href="../drawdown/">回撤恢复计算</a></li></ul></div><div><h3>进阶</h3><ul><li><a href="../cost/">合约真实成本计算器</a></li><li><a href="../expectancy/">策略期望值检查</a></li><li><a href="../overfit/">回测过拟合检查</a></li><li><a href="../concentration/">同向持仓集中度</a></li></ul></div><div><h3>说明</h3><p>所有计算在你的浏览器里完成，输入的数字不会上传；网站只用 Cloudflare 匿名统计访问量，不用 cookie。</p><p>页面中的币安注册链接为作者邀请链接，作者会获得平台返佣。</p></div><div class="legal">工具结果仅为估算，以交易所页面显示为准。合约交易风险很高，可能损失全部保证金。本站内容不构成投资建议。</div></div></footer>
+<footer class="sitefoot gut"><div class="in"><div class="brandcol"><a class="logo" href="../"><span class="mk"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M6 4v16M12 7v13M18 3v12"/><rect x="4" y="8" width="4" height="7" rx="1" fill="#fff"/><rect x="10" y="11" width="4" height="6" rx="1" fill="#fff"/><rect x="16" y="5" width="4" height="7" rx="1" fill="#fff"/></svg></span>WiseKit</a><p>免费的交易与理财计算器。作者是一个把合约量化从回测做到 150U 真实资金实盘的散户，部分默认值来自实盘数据。</p><p><a href="../research/">研究文章 →</a></p></div><div><h3>常用工具</h3><ul><li><a href="../pnl/">合约收益计算器</a></li><li><a href="../liq/">杠杆爆仓速查</a></li><li><a href="../position/">仓位与强平价计算</a></li><li><a href="../avgprice/">补仓均价与保本价</a></li><li><a href="../funding/">资金费率换算</a></li><li><a href="../earn/">理财收益计算</a></li><li><a href="../drawdown/">回撤恢复计算</a></li></ul></div><div><h3>进阶</h3><ul><li><a href="../cost/">合约真实成本计算器</a></li><li><a href="../expectancy/">策略期望值检查</a></li><li><a href="../overfit/">回测过拟合检查</a></li><li><a href="../concentration/">同向持仓集中度</a></li></ul></div><div><h3>说明</h3><p>所有计算在你的浏览器里完成，输入的数字不会上传；网站只用 Cloudflare 匿名统计访问量，不用 cookie。</p><p>页面中的币安注册链接为作者邀请链接，作者会获得平台返佣。</p></div><div class="legal">工具结果仅为估算，以交易所页面显示为准。合约交易风险很高，可能损失全部保证金。本站内容不构成投资建议。</div></div></footer>
 <script>addEventListener('load',function(){try{var s=document.createElement('script');s.async=true;s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon',"{\"token\": \"23b9622e268741f6908670e760f0bd26\"}");document.body.appendChild(s);}catch(e){}});</script>
 </body></html>
