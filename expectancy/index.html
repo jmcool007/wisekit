@@ -86,6 +86,7 @@ footer a{color:var(--accent)}
 .addr button{font:inherit;font-size:12px;padding:3px 9px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
 .tag{font-size:11.5px;padding:1px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
 [hidden]{display:none!important}
+@media (max-width:520px){.addr{grid-template-columns:minmax(0,1fr) auto}.addr .tag{grid-column:1/-1;justify-self:start}}
 </style>
 </head><body>
 <div class="wrap">
@@ -148,12 +149,10 @@ const SITE = {
   refUrl:  "https://www.bsmkweb.net/register?ref=157987801",      // 中文注册
   refUrl2: "https://accounts.binance.com/register?ref=157987801", // 币安官方域名
   squareUrl: "",   // 你的币安广场主页链接（关注；1000 粉后可开打赏）
-  payId: "",       // Binance Pay ID（币安用户之间转账免手续费、秒到）
+  payId: "157987801", // 币安 ID，Binance Pay 按 ID 转账（币安用户之间免手续费、秒到）
   // 链上捐赠地址：务必核对网络，填错网络会丢币
   addrs: [
-    // {net:"USDT · TRC20", addr:""},
-    // {net:"USDT / BNB · BEP20", addr:""},
-    // {net:"BTC", addr:""},
+    {net:"USDT · BEP20（BSC）", addr:"0xbf8beefcf96a27c695669da3d146b278db9be805"},
   ],
 };
 </script>
@@ -173,7 +172,7 @@ const SITE = {
     </div>
     <div class="scard" id="sDonate" hidden>
       <b>直接捐赠</b>
-      <small>捐赠是自愿赠与，不换取任何服务或承诺。链上转账前请核对网络。</small>
+      <small>捐赠是自愿赠与，不换取任何服务或承诺。币安用户用 Pay 按 ID 转账最方便（免手续费）；链上转账只支持 BSC（BEP20）网络，选错网络会丢币。</small>
       <div id="sAddrs" style="display:grid;gap:8px"></div>
     </div>
   </div>
@@ -182,7 +181,7 @@ const SITE = {
 (()=>{const S=SITE, $=id=>document.getElementById(id);
  if(S.refCode){$("sRefCode").textContent=S.refCode;$("sRefUrl").href=S.refUrl;$("sRefUrl2").href=S.refUrl2;} else $("sRef").hidden=true;
  if(S.squareUrl){$("sSquareUrl").href=S.squareUrl;$("sSquare").hidden=false;}
- const rows=[]; if(S.payId) rows.push({net:"Binance Pay ID",addr:S.payId}); (S.addrs||[]).forEach(a=>a.addr&&rows.push(a));
+ const rows=[]; if(S.payId) rows.push({net:"币安 ID · Pay 转账",addr:S.payId}); (S.addrs||[]).forEach(a=>a.addr&&rows.push(a));
  if(!rows.length) return;
  $("sDonate").hidden=false;
  $("sAddrs").innerHTML=rows.map((r,i)=>`<div class="addr"><span class="tag">${r.net}</span><code id="a${i}">${r.addr}</code><button type="button" data-i="${i}">复制</button></div>`).join("");
