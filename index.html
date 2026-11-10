@@ -2,7 +2,7 @@
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>合约交易者工具箱</title>
-<meta name="description" content="免费的永续合约工具合集：真实成本、策略期望、回测过拟合、持仓集中度、仓位与强平价、补仓均价、资金费率、回撤恢复。不用注册，数字只在浏览器里计算。">
+<meta name="description" content="免费的币安合约/理财计算工具：合约收益、爆仓价、仓位、补仓均价、资金费率、理财收益、回撤恢复，以及策略检验工具。不用注册，数字只在浏览器里计算。">
 <style>body{margin:0}
 :root{
   --bg:#f3f5f7; --panel:#ffffff; --ink:#18212b; --muted:#5c6b7a; --line:#d9e0e7;
@@ -102,28 +102,33 @@ footer a{color:var(--accent)}
 .card span{color:var(--muted);font-size:13.5px}
 .card em{font-style:normal;color:var(--accent);font-size:13px;margin-top:4px}
 .group{font-size:13px;letter-spacing:.08em;color:var(--muted);margin:6px 0 -8px;font-weight:600}
+.cards.adv .card{padding:13px 16px}
+.cards.adv .card b{font-size:15px}
 </style>
 <div class="wrap">
 <nav class="nav" aria-label="站点"><a class="brand" href="./" aria-current="page">合约工具箱</a><a href="./#tools">全部工具</a><a href="#support">支持作者</a></nav>
 <header>
   <h1>合约交易者工具箱</h1>
-  <p>一个散户把合约量化从回测做到真实资金实盘，过程中做的小工具，部分默认值直接取自作者 150U 小资金实盘的真实数据。免费、不用注册，你输入的数字只在浏览器里计算。</p>
+  <p>下单前算一算：能赚多少、多少会爆仓、补仓后均价多少、理财一天拿多少。免费、不用注册，你输入的数字只在浏览器里计算。</p>
 </header>
-<h2 class="group" id="tools">策略检验：这个策略真的能赚吗</h2>
+<h2 class="group" id="tools">常用</h2>
 <div class="cards">
-  <a class="card" href="cost/"><b>合约真实成本计算器</b><span>手续费 + 滑点 + 资金费，算往返成本、每月成本占本金多少、保本胜率。</span><em>打开 →</em></a>
-  <a class="card" href="expectancy/"><b>策略期望值检查</b><span>胜率 72.5% 为什么还亏？填胜率和平均盈亏，看每笔期望和保本胜率。</span><em>打开 →</em></a>
-  <a class="card" href="overfit/"><b>回测过拟合检查</b><span>试了几万组参数挑出最好的，有多少是运气？按试验次数算收缩后夏普。</span><em>打开 →</em></a>
-  <a class="card" href="concentration/"><b>同向持仓集中度</b><span>同时空 50 个币，实际相当于几个独立仓位？大盘一起动时会亏多少？</span><em>打开 →</em></a>
+  <a class="card" href="pnl/"><b>合约收益计算器</b><span>这单赚多少、收益率多少？想赚 50% 要涨到哪，止损设在哪？</span><em>打开 →</em></a>
+  <a class="card" href="liq/"><b>杠杆爆仓速查</b><span>开几倍杠杆，价格反向多少就爆仓？2~125 倍一张表看清。</span><em>打开 →</em></a>
+  <a class="card" href="position/"><b>仓位与强平价计算</b><span>每笔最多想亏多少？反推该开多大仓位、用几倍杠杆。</span><em>打开 →</em></a>
+  <a class="card" href="avgprice/"><b>补仓均价与保本价</b><span>补了几次仓，均价是多少？算上手续费涨回哪里才不亏？</span><em>打开 →</em></a>
+  <a class="card" href="funding/"><b>资金费率换算</b><span>0.01% 资金费率拿一个月要付多少？换算成每天、每年。</span><em>打开 →</em></a>
+  <a class="card" href="earn/"><b>理财收益计算</b><span>年化 5% 存 1000U，一天拿多少？复投后实际年化多少？</span><em>打开 →</em></a>
+  <a class="card" href="drawdown/"><b>回撤恢复计算</b><span>亏了 30% 要赚多少才回本？连亏 10 单会回撤多少？</span><em>打开 →</em></a>
 </div>
-<h2 class="group">下单与持仓</h2>
-<div class="cards">
-  <a class="card" href="position/"><b>仓位与强平价计算</b><span>按每笔最多亏多少反推仓位和杠杆，检查强平价会不会比止损先到。</span><em>打开 →</em></a>
-  <a class="card" href="avgprice/"><b>补仓均价与保本价</b><span>多次开仓后的均价、含手续费的保本价、按目标价平仓的盈亏。</span><em>打开 →</em></a>
-  <a class="card" href="funding/"><b>资金费率换算</b><span>每次结算费率换算成日、年化，以及持仓 N 天的实际收付。</span><em>打开 →</em></a>
-  <a class="card" href="drawdown/"><b>回撤恢复计算</b><span>亏 X% 要赚多少才回本、要多久；连亏几笔的回撤和出现概率。</span><em>打开 →</em></a>
+<h2 class="group">进阶：检验策略能不能赚钱</h2>
+<div class="cards adv">
+  <a class="card" href="cost/"><b>合约真实成本计算器</b><span>手续费 + 滑点 + 资金费，算往返成本和保本胜率。默认值来自作者 933 笔实盘成交。</span></a>
+  <a class="card" href="expectancy/"><b>策略期望值检查</b><span>胜率 72.5% 为什么还亏？看每笔期望和保本胜率。</span></a>
+  <a class="card" href="overfit/"><b>回测过拟合检查</b><span>试了几万组参数挑出最好的，有多少是运气？</span></a>
+  <a class="card" href="concentration/"><b>同向持仓集中度</b><span>同时空 50 个币，实际相当于几个独立仓位？</span></a>
 </div>
-<footer>工具只做计算和估算，不构成投资建议。有想要的工具，可以在币安广场留言。</footer>
+<footer>工具只做计算和估算，以交易所页面显示为准，不构成投资建议。有想要的工具，可以在币安广场留言。</footer>
 <script>
 // 站点配置：留空的项目不会显示。改完运行 tools/deploy.sh。
 const SITE = {
