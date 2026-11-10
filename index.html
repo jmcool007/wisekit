@@ -2,7 +2,7 @@
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>合约交易者工具箱</title>
-<meta name="description" content="免费的永续合约工具合集：真实成本、策略期望、仓位与强平价、资金费率换算。不用注册，全部在浏览器里计算。">
+<meta name="description" content="免费的永续合约工具合集：真实成本、策略期望、回测过拟合、持仓集中度、仓位与强平价、补仓均价、资金费率、回撤恢复。不用注册，数字只在浏览器里计算。">
 <style>body{margin:0}
 :root{
   --bg:#f3f5f7; --panel:#ffffff; --ink:#18212b; --muted:#5c6b7a; --line:#d9e0e7;
@@ -87,6 +87,11 @@ footer a{color:var(--accent)}
 .tag{font-size:11.5px;padding:1px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
 [hidden]{display:none!important}
 @media (max-width:520px){.addr{grid-template-columns:minmax(0,1fr) auto}.addr .tag{grid-column:1/-1;justify-self:start}}
+/* 其他工具 */
+.more{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13.5px}
+.more b{font-size:13px;color:var(--muted);margin-right:4px;font-weight:600}
+.more a{color:var(--ink);text-decoration:none;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:4px 11px}
+.more a:hover{border-color:var(--accent);color:var(--accent)}
 </style>
 </head><body>
 <style>
@@ -96,18 +101,27 @@ footer a{color:var(--accent)}
 .card b{font-size:16px}
 .card span{color:var(--muted);font-size:13.5px}
 .card em{font-style:normal;color:var(--accent);font-size:13px;margin-top:4px}
+.group{font-size:13px;letter-spacing:.08em;color:var(--muted);margin:6px 0 -8px;font-weight:600}
 </style>
 <div class="wrap">
-<nav class="nav" aria-label="工具"><a href="./" class="brand" aria-current="page">合约工具箱</a><a href="cost/">真实成本</a><a href="expectancy/">期望值</a><a href="position/">仓位/强平价</a><a href="funding/">资金费率</a><a href="./#support">支持作者</a></nav>
+<nav class="nav" aria-label="站点"><a class="brand" href="./" aria-current="page">合约工具箱</a><a href="./#tools">全部工具</a><a href="#support">支持作者</a></nav>
 <header>
   <h1>合约交易者工具箱</h1>
-  <p>一个散户把合约量化从回测做到真实资金实盘，过程中做的小工具。默认值都来自作者 150U 小资金实盘的真实数据。免费、不用注册、不收集数据。</p>
+  <p>一个散户把合约量化从回测做到真实资金实盘，过程中做的小工具，部分默认值直接取自作者 150U 小资金实盘的真实数据。免费、不用注册，你输入的数字只在浏览器里计算。</p>
 </header>
+<h2 class="group" id="tools">策略检验：这个策略真的能赚吗</h2>
 <div class="cards">
   <a class="card" href="cost/"><b>合约真实成本计算器</b><span>手续费 + 滑点 + 资金费，算往返成本、每月成本占本金多少、保本胜率。</span><em>打开 →</em></a>
   <a class="card" href="expectancy/"><b>策略期望值检查</b><span>胜率 72.5% 为什么还亏？填胜率和平均盈亏，看每笔期望和保本胜率。</span><em>打开 →</em></a>
+  <a class="card" href="overfit/"><b>回测过拟合检查</b><span>试了几万组参数挑出最好的，有多少是运气？按试验次数算收缩后夏普。</span><em>打开 →</em></a>
+  <a class="card" href="concentration/"><b>同向持仓集中度</b><span>同时空 50 个币，实际相当于几个独立仓位？大盘一起动时会亏多少？</span><em>打开 →</em></a>
+</div>
+<h2 class="group">下单与持仓</h2>
+<div class="cards">
   <a class="card" href="position/"><b>仓位与强平价计算</b><span>按每笔最多亏多少反推仓位和杠杆，检查强平价会不会比止损先到。</span><em>打开 →</em></a>
+  <a class="card" href="avgprice/"><b>补仓均价与保本价</b><span>多次开仓后的均价、含手续费的保本价、按目标价平仓的盈亏。</span><em>打开 →</em></a>
   <a class="card" href="funding/"><b>资金费率换算</b><span>每次结算费率换算成日、年化，以及持仓 N 天的实际收付。</span><em>打开 →</em></a>
+  <a class="card" href="drawdown/"><b>回撤恢复计算</b><span>亏 X% 要赚多少才回本、要多久；连亏几笔的回撤和出现概率。</span><em>打开 →</em></a>
 </div>
 <footer>工具只做计算和估算，不构成投资建议。有想要的工具，可以在币安广场留言。</footer>
 <script>
@@ -126,7 +140,7 @@ const SITE = {
 </script>
 <section class="panel support" id="support">
   <h2>支持作者</h2>
-  <p>这些工具免费、不用注册、不收集任何数据，全部在你的浏览器里计算。如果帮到了你，下面几种方式任选，都不强求。</p>
+  <p>这些工具免费、不用注册；你输入的数字只在浏览器里计算，不会上传（网站只用 Cloudflare 匿名统计访问量，不用 cookie）。如果帮到了你，下面几种方式任选，都不强求。</p>
   <div class="sgrid">
     <div class="scard" id="sRef">
       <b>用邀请码注册币安 <span class="tag">作者有返佣</span></b>
@@ -162,4 +176,5 @@ const SITE = {
 
 </div>
 
+<script>addEventListener('load',function(){try{var s=document.createElement('script');s.async=true;s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon',"{\"token\": \"51994a1e104146a8af88333c57f733ab\"}");document.body.appendChild(s);}catch(e){}});</script>
 </body></html>

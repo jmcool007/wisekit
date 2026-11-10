@@ -87,10 +87,15 @@ footer a{color:var(--accent)}
 .tag{font-size:11.5px;padding:1px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
 [hidden]{display:none!important}
 @media (max-width:520px){.addr{grid-template-columns:minmax(0,1fr) auto}.addr .tag{grid-column:1/-1;justify-self:start}}
+/* 其他工具 */
+.more{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13.5px}
+.more b{font-size:13px;color:var(--muted);margin-right:4px;font-weight:600}
+.more a{color:var(--ink);text-decoration:none;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:4px 11px}
+.more a:hover{border-color:var(--accent);color:var(--accent)}
 </style>
 </head><body>
 <div class="wrap">
-<nav class="nav" aria-label="工具"><a href="../" class="brand">合约工具箱</a><a href="../cost/">真实成本</a><a href="../expectancy/">期望值</a><a href="../position/">仓位/强平价</a><a href="../funding/" aria-current="page">资金费率</a><a href="../#support">支持作者</a></nav>
+<nav class="nav" aria-label="站点"><a class="brand" href="../">合约工具箱</a><a href="../#tools">全部工具</a><a href="#support">支持作者</a></nav>
 <header>
   <h1>资金费率换算</h1>
   <p>0.01% 看着很小，但它每 8 小时（有的币 4 小时、1 小时）结算一次。换算成每天、每年，再算你拿这么多天实际要付或能收多少。</p>
@@ -138,6 +143,7 @@ footer a{color:var(--accent)}
 <footer>
   按费率恒定、名义价值不变的简单累加计算（不复利）。实际费率每期都在变，只在结算时刻持仓才收付。本页只做换算，不构成投资建议。
 </footer>
+<nav class="more" aria-label="其他工具"><b>其他工具</b><a href="../cost/">真实成本</a><a href="../expectancy/">期望值</a><a href="../overfit/">回测过拟合</a><a href="../concentration/">持仓集中度</a><a href="../position/">仓位/强平价</a><a href="../avgprice/">补仓均价/保本价</a><a href="../drawdown/">回撤恢复</a></nav>
 <script>
 // 站点配置：留空的项目不会显示。改完运行 tools/deploy.sh。
 const SITE = {
@@ -154,7 +160,7 @@ const SITE = {
 </script>
 <section class="panel support" id="support">
   <h2>支持作者</h2>
-  <p>这些工具免费、不用注册、不收集任何数据，全部在你的浏览器里计算。如果帮到了你，下面几种方式任选，都不强求。</p>
+  <p>这些工具免费、不用注册；你输入的数字只在浏览器里计算，不会上传（网站只用 Cloudflare 匿名统计访问量，不用 cookie）。如果帮到了你，下面几种方式任选，都不强求。</p>
   <div class="sgrid">
     <div class="scard" id="sRef">
       <b>用邀请码注册币安 <span class="tag">作者有返佣</span></b>
@@ -217,4 +223,5 @@ $("f").addEventListener("submit",e=>e.preventDefault());
 render();
 </script>
 
+<script>addEventListener('load',function(){try{var s=document.createElement('script');s.async=true;s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon',"{\"token\": \"51994a1e104146a8af88333c57f733ab\"}");document.body.appendChild(s);}catch(e){}});</script>
 </body></html>
