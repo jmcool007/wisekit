@@ -206,7 +206,7 @@ tr:last-child td{border-bottom:0}
 </style>
 </head><body>
 <header class="top gut"><div class="in"><a class="logo" href="../../"><span class="mk"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M6 4v16M12 7v13M18 3v12"/><rect x="4" y="8" width="4" height="7" rx="1" fill="#fff"/><rect x="10" y="11" width="4" height="6" rx="1" fill="#fff"/><rect x="16" y="5" width="4" height="7" rx="1" fill="#fff"/></svg></span>WiseKit<small>交易与理财计算器</small></a><nav aria-label="站点"><a href="../../#tools">全部工具</a><a href="../../research/">研究</a><a href="#support">支持作者</a></nav></div></header>
-<div class="wrap narrow"><header class="phead"><nav class="crumb" aria-label="位置"><a href="../../">WiseKit</a><span>/</span><a href="../">研究</a><span>/</span><span>做空方向对了，为什么还是赚不到？跌的时候只吃一半，涨的时候吃全额</span></nav><h1>做空方向对了，为什么还是赚不到？跌的时候只吃一半，涨的时候吃全额</h1><p class="ameta">2026-11-10 · 约 3 分钟 · 不构成投资建议</p></header><article class="panel prose"><h2>背景：方向看起来是对的</h2>
+<div class="wrap narrow"><header class="phead"><nav class="crumb" aria-label="位置"><a href="../../">WiseKit</a><span>/</span><a href="../">研究</a><span>/</span><span>做空方向对了，为什么还是赚不到？跌的时候只吃一半，涨的时候吃全额</span></nav><h1>做空方向对了，为什么还是赚不到？跌的时候只吃一半，涨的时候吃全额</h1><p class="ameta">2026-11-10 · 约 4 分钟 · 不构成投资建议</p></header><article class="panel prose"><h2>背景：方向看起来是对的</h2>
 <p>我在跑一个零资金的影子竞赛场：100 个虚拟账户，每个 150U，套用和实盘一样的约束（最多 50 个仓位、真实手续费、真实盘口）。</p>
 <p>这段时间山寨币一直在跌。山寨等权指数从 10-10 起连续 5 周每周下跌，合计约 −25%；正式计分窗口（11-04 ~ 11-10）里跌了 7.2%。</p>
 <p>榜单前几名都赚了约 20%，几乎全是空单。很自然的想法是：山寨大多数长期在跌，我们主要做空，方向是对的。</p>
@@ -231,7 +231,9 @@ tr:last-child td{border-bottom:0}
 <h2>可以带走的做法</h2>
 <p>复盘时把收益拆成三块：</p>
 <ol><li><strong>大盘部分</strong>：同样敞口拿着不动能赚多少，这是参照线；</li><li><strong>选币部分</strong>：扣掉大盘后每个信号还剩多少；</li><li><strong>出场形状</strong>：按大盘涨跌分组，看涨段和跌段各吃到多少。</li></ol>
-<p>如果只有第一块是正的，那赚的是行情，不是策略。更直接的做法，是先拿住基础敞口，再让信号只负责加减仓；而不是每次进出都从零开始，付一次往返成本。下一步我会先用多年历史数据（必须包含山寨上涨的年份）检验这个思路，再放进竞赛场前向跑。</p>
+<p>如果只有第一块是正的，那赚的是行情，不是策略。</p>
+<p>那干脆长期拿着空单不动行不行？我之前用 2022-01 以来的数据（含已下架合约、资金费）测过长期持有山寨空头篮子：年化 −4% 到 −11%。不计成本时有的年份 +73%、有的 −31%，是在赌方向；资金费又把收益从 +4.3% 拉到 −7.9%。这 6 天资金费几乎为零，只是这段行情的特例。所以"山寨长期会跌"即使成立，直接做空也很难把它变成收益。</p>
+<p>我又回头查了 2022~2024 年 30 个月、3906 组历史参数：把移动止损从 0.75 倍 ATR 放宽到 3 倍，79% 的配置变好，涨月跌月都变好，但最好的那档也只有约 11% 的配置 30 个月合计为正。出场参数能让你少亏，改不出盈利。下一步是让竞赛场用实时盘口前向比较不同的移动止损宽度，再决定要不要改。</p>
 <p>窗口只有 6 天、只有一种行情，交易之间高度相关，以上都是描述性结果，不是验证过的策略。</p>
 <p>你的策略在上涨段和下跌段，各吃到了大盘涨跌的多少？</p>
 <p>*以上为个人研究记录，不构成投资建议。*</p></article><a class="card related" href="../../expectancy/"><span class="ico"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 4H6l6.5 8L6 20h12"/></svg></span><b>相关工具：策略期望值检查</b><span class="d">胜率 72.5% 为什么还亏？看每笔期望和保本胜率。</span></a><div class="sec"><h2>更多研究</h2><span><a href="../">全部 →</a></span></div><div class="rlist"><a class="rcard" href="../../research/pump-dump/"><span class="rmeta">2026-11-10 · 约 2 分钟</span><b>暴涨 30%、暴跌 25% 之后：币安永续 2022 年以来的统计</b><span class="d">单日涨幅 ≥30% 出现过 2378 次，7 天后中位数 −14.1%；单日跌幅 ≥25% 出现过 1483 次，之后基本没有方向。追涨大概率吃亏，但两头的尾部都很宽。</span></a><a class="rcard" href="../../research/44k-configs/"><span class="rmeta">2026-11-10 · 约 1 分钟</span><b>测了 4 万多个合约策略配置，能上实盘的：0 个</b><span class="d">用 150U 真实资金跑永续合约量化，同时做了大量回测。13 种常见信号、4 万多个配置，三段数据都站得住的一个都没有。</span></a><a class="rcard" href="../../research/winrate-725/"><span class="rmeta">2026-11-10 · 约 1 分钟</span><b>胜率 72.5%，为什么还是亏钱？</b><span class="d">实盘 933 笔，胜率 72.5%，结果是亏的。盈利单平均 +0.17R，亏损单平均 −0.97R，要胜率约 85% 才能保本。</span></a></div><script>
