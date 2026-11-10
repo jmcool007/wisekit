@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>资金费率换算</title>
+<meta name="description" content="把永续合约每次结算的资金费率换算成日、年化，以及持仓 N 天的实际收付金额。">
+<style>body{margin:0}
+:root{
+  --bg:#f3f5f7; --panel:#ffffff; --ink:#18212b; --muted:#5c6b7a; --line:#d9e0e7;
+  --accent:#0e7c86; --accent-soft:#dff1f2; --warn:#b4530b; --bad:#b42318; --good:#1d7a45;
+  --c1:#0e7c86; --c2:#5aa9b0; --c3:#c27b2c; --c4:#e0a85e; --c5:#7b6fb0;
+  --sans:system-ui,-apple-system,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f151b; --panel:#17202a; --ink:#e6edf3; --muted:#93a3b3; --line:#2a3644;
+  --accent:#4cc0c9; --accent-soft:#163a3e; --warn:#e7a35a; --bad:#f07a6e; --good:#5cc98a;
+  --c1:#4cc0c9; --c2:#2f8b93; --c3:#e7a35a; --c4:#b9813f; --c5:#a89be0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f151b; --panel:#17202a; --ink:#e6edf3; --muted:#93a3b3; --line:#2a3644;
+  --accent:#4cc0c9; --accent-soft:#163a3e; --warn:#e7a35a; --bad:#f07a6e; --good:#5cc98a;
+  --c1:#4cc0c9; --c2:#2f8b93; --c3:#e7a35a; --c4:#b9813f; --c5:#a89be0; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+.wrap{max-width:1080px;margin:0 auto;display:grid;gap:22px}
+header h1{font-size:clamp(22px,3.4vw,30px);margin:0;text-wrap:balance;letter-spacing:.01em}
+header p{margin:6px 0 0;color:var(--muted);max-width:62ch}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:22px;align-items:start}
+@media (max-width:820px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px}
+.panel h2{font-size:13px;letter-spacing:.08em;color:var(--muted);margin:0 0 12px;font-weight:600}
+fieldset{border:0;margin:0 0 16px;padding:0;display:grid;gap:10px}
+fieldset:last-child{margin-bottom:0}
+legend{font-weight:600;font-size:14px;margin-bottom:8px;padding:0}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 128px;gap:10px;align-items:center}
+.row label{color:var(--ink);font-size:14px}
+.row small{display:block;color:var(--muted);font-size:12px}
+input[type=number],select{width:100%;font:inherit;font-family:var(--mono);font-size:14px;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);text-align:right}
+select{text-align:left;font-family:var(--sans)}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.check{display:flex;gap:8px;align-items:center;font-size:14px}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.presets button{font:inherit;font-size:13px;padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.presets button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.hero{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline;border-bottom:1px dashed var(--line);padding-bottom:14px;margin-bottom:14px}
+.hero .big{font-family:var(--mono);font-size:clamp(40px,7vw,56px);font-weight:600;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums}
+.hero .unit{font-family:var(--mono);color:var(--muted)}
+.hero .sub{flex-basis:100%;color:var(--muted);font-size:14px}
+.bar{display:flex;height:14px;border-radius:4px;overflow:hidden;background:var(--line);margin:4px 0 8px}
+.bar span{display:block;height:100%}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:4px 14px;font-size:13px;margin-bottom:16px}
+.legend div{display:flex;gap:7px;align-items:center;min-width:0}
+.legend i{width:10px;height:10px;border-radius:2px;flex:none}
+.legend b{font-family:var(--mono);font-weight:400;margin-left:auto;font-variant-numeric:tabular-nums}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:7px 0;border-bottom:1px solid var(--line);vertical-align:top}
+td:last-child{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;padding-left:12px}
+td small{display:block;color:var(--muted);font-size:12px}
+tr:last-child td{border-bottom:0}
+.pill{display:inline-block;font-size:12px;padding:1px 8px;border-radius:999px;margin-left:6px;font-family:var(--sans)}
+.ok{background:color-mix(in srgb,var(--good) 15%,transparent);color:var(--good)}
+.mid{background:color-mix(in srgb,var(--warn) 15%,transparent);color:var(--warn)}
+.hi{background:color-mix(in srgb,var(--bad) 15%,transparent);color:var(--bad)}
+.note{font-size:13px;color:var(--muted);background:var(--bg);border-radius:8px;padding:10px 12px;margin-top:14px}
+.note strong{color:var(--ink)}
+footer{color:var(--muted);font-size:12.5px;max-width:80ch}
+footer a{color:var(--accent)}
+/* 顶部导航 */
+.nav{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:13.5px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.nav a{color:var(--muted);text-decoration:none}
+.nav a:hover{color:var(--accent)}
+.nav a[aria-current="page"]{color:var(--accent);font-weight:600}
+.nav .brand{color:var(--ink);font-weight:700;margin-right:6px}
+/* 支持作者 */
+.support h2{margin-bottom:6px}
+.support > p{margin:0 0 14px;color:var(--muted);font-size:14px;max-width:70ch}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.scard{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--bg);display:grid;gap:8px;align-content:start;min-width:0}
+.scard b{font-size:14px}
+.scard small{color:var(--muted);font-size:12px;line-height:1.5}
+.scard .acts{display:flex;flex-wrap:wrap;gap:8px}
+.btn{display:inline-block;font:inherit;font-size:13.5px;background:var(--accent);color:var(--panel);text-decoration:none;padding:7px 13px;border-radius:7px;font-weight:600;border:0;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.addr{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;font-size:13px}
+.addr code{font-family:var(--mono);font-size:12px;overflow-wrap:anywhere;color:var(--ink)}
+.addr button{font:inherit;font-size:12px;padding:3px 9px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.tag{font-size:11.5px;padding:1px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+[hidden]{display:none!important}
+</style>
+</head><body>
+<div class="wrap">
+<nav class="nav" aria-label="工具"><a href="../" class="brand">合约工具箱</a><a href="../cost/">真实成本</a><a href="../expectancy/">期望值</a><a href="../position/">仓位/强平价</a><a href="../funding/" aria-current="page">资金费率</a><a href="../#support">支持作者</a></nav>
+<header>
+  <h1>资金费率换算</h1>
+  <p>0.01% 看着很小，但它每 8 小时（有的币 4 小时、1 小时）结算一次。换算成每天、每年，再算你拿这么多天实际要付或能收多少。</p>
+</header>
+
+<div class="grid">
+<form class="panel" id="f" autocomplete="off">
+  <h2>输入</h2>
+  <div class="presets" role="group" aria-label="预设">
+    <button type="button" data-p="base" aria-pressed="true">基准 0.01%</button>
+    <button type="button" data-p="hot" aria-pressed="false">示例：过热 0.1%</button>
+    <button type="button" data-p="neg" aria-pressed="false">示例：负费率 −0.05%</button>
+  </div>
+  <fieldset>
+    <legend>费率</legend>
+    <div class="row"><label for="rate">资金费率（%/每次结算）<small>正数时多头付给空头</small></label><input id="rate" type="number" step="0.001" value="0.01"></div>
+    <div class="row"><label for="int">结算间隔（小时）</label><select id="int"><option value="8">8</option><option value="4">4</option><option value="1">1</option></select></div>
+  </fieldset>
+  <fieldset>
+    <legend>持仓</legend>
+    <div class="row"><label for="side">方向</label><select id="side"><option value="long">做多</option><option value="short">做空</option></select></div>
+    <div class="row"><label for="notional">名义价值（U）</label><input id="notional" type="number" step="10" min="0" value="1000"></div>
+    <div class="row"><label for="lev">杠杆（倍）</label><input id="lev" type="number" step="1" min="1" value="5"></div>
+    <div class="row"><label for="days">持有天数</label><input id="days" type="number" step="1" min="0" value="30"></div>
+  </fieldset>
+</form>
+
+<section class="panel" aria-live="polite">
+  <h2>结果</h2>
+  <div class="hero">
+    <span class="big" id="apr">0</span><span class="unit">% 年化（按名义价值）</span>
+    <span class="sub" id="sub"></span>
+  </div>
+  <table>
+    <tr><td>每天结算次数</td><td id="nDay"></td></tr>
+    <tr><td>每天费率</td><td id="daily"></td></tr>
+    <tr><td>每次收付<small>按名义价值</small></td><td id="per"></td></tr>
+    <tr><td>持有期合计<small>正 = 你收到，负 = 你付出</small></td><td id="tot"></td></tr>
+    <tr><td>占保证金<small>名义价值 ÷ 杠杆</small></td><td id="onMargin"></td></tr>
+  </table>
+  <div class="note" id="note"></div>
+</section>
+</div>
+
+<footer>
+  按费率恒定、名义价值不变的简单累加计算（不复利）。实际费率每期都在变，只在结算时刻持仓才收付。本页只做换算，不构成投资建议。
+</footer>
+<script>
+// 站点配置：留空的项目不会显示。改完运行 tools/deploy.sh。
+const SITE = {
+  refCode: "157987801",
+  refUrl:  "https://www.bsmkweb.net/register?ref=157987801",      // 中文注册
+  refUrl2: "https://accounts.binance.com/register?ref=157987801", // 币安官方域名
+  squareUrl: "",   // 你的币安广场主页链接（关注；1000 粉后可开打赏）
+  payId: "",       // Binance Pay ID（币安用户之间转账免手续费、秒到）
+  // 链上捐赠地址：务必核对网络，填错网络会丢币
+  addrs: [
+    // {net:"USDT · TRC20", addr:""},
+    // {net:"USDT / BNB · BEP20", addr:""},
+    // {net:"BTC", addr:""},
+  ],
+};
+</script>
+<section class="panel support" id="support">
+  <h2>支持作者</h2>
+  <p>这些工具免费、不用注册、不收集任何数据，全部在你的浏览器里计算。如果帮到了你，下面几种方式任选，都不强求。</p>
+  <div class="sgrid">
+    <div class="scard" id="sRef">
+      <b>用邀请码注册币安 <span class="tag">作者有返佣</span></b>
+      <small>邀请码 <code id="sRefCode" style="font-family:var(--mono)"></code>。通过此邀请注册，作者会获得平台返佣；对你的费率按平台邀请规则执行。</small>
+      <span class="acts"><a class="btn" id="sRefUrl" target="_blank" rel="noopener">注册（中文）</a><a class="btn ghost" id="sRefUrl2" target="_blank" rel="noopener">Binance.com</a></span>
+    </div>
+    <div class="scard" id="sSquare" hidden>
+      <b>在币安广场关注</b>
+      <small>实盘与回测的研究记录，亏的也照实写。新工具和新研究会先发在这里。</small>
+      <span class="acts"><a class="btn" id="sSquareUrl" target="_blank" rel="noopener">打开主页</a></span>
+    </div>
+    <div class="scard" id="sDonate" hidden>
+      <b>直接捐赠</b>
+      <small>捐赠是自愿赠与，不换取任何服务或承诺。链上转账前请核对网络。</small>
+      <div id="sAddrs" style="display:grid;gap:8px"></div>
+    </div>
+  </div>
+</section>
+<script>
+(()=>{const S=SITE, $=id=>document.getElementById(id);
+ if(S.refCode){$("sRefCode").textContent=S.refCode;$("sRefUrl").href=S.refUrl;$("sRefUrl2").href=S.refUrl2;} else $("sRef").hidden=true;
+ if(S.squareUrl){$("sSquareUrl").href=S.squareUrl;$("sSquare").hidden=false;}
+ const rows=[]; if(S.payId) rows.push({net:"Binance Pay ID",addr:S.payId}); (S.addrs||[]).forEach(a=>a.addr&&rows.push(a));
+ if(!rows.length) return;
+ $("sDonate").hidden=false;
+ $("sAddrs").innerHTML=rows.map((r,i)=>`<div class="addr"><span class="tag">${r.net}</span><code id="a${i}">${r.addr}</code><button type="button" data-i="${i}">复制</button></div>`).join("");
+ $("sAddrs").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return; const el=$("a"+b.dataset.i);
+  const done=()=>{b.textContent="已复制"; setTimeout(()=>b.textContent="复制",1500);};
+  const sel=()=>{const r=document.createRange(); r.selectNodeContents(el); const s=getSelection(); s.removeAllRanges(); s.addRange(r);};
+  try{ navigator.clipboard.writeText(el.textContent).then(done,sel); }catch(_){ sel(); }});
+})();
+</script>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const presets = {base:{rate:0.01},hot:{rate:0.1},neg:{rate:-0.05}};
+const num = id => { const v = parseFloat($(id).value); return isFinite(v) ? v : 0; };
+const fmt = (v,d=2) => v.toLocaleString("zh-CN",{minimumFractionDigits:d,maximumFractionDigits:d});
+const sgn = (v,d=2) => (v>0?"+":"") + fmt(v,d);
+function render(){
+  const r = num("rate")/100, n = 24/parseFloat($("int").value), N = num("notional"), lev = Math.max(1,num("lev")), days = num("days");
+  const dir = $("side").value === "long" ? -1 : 1;   // 正费率：多付空收
+  $("apr").textContent = fmt(r*n*365*100,1);
+  $("sub").textContent = r === 0 ? "费率为 0，多空互不收付" : `当前${r>0?"多头付给空头":"空头付给多头"}`;
+  $("nDay").textContent = `${fmt(n,0)} 次`;
+  $("daily").textContent = `${fmt(r*n*100,3)}%`;
+  $("per").textContent = `${sgn(dir*r*N,4)} U`;
+  const tot = dir * r * n * days * N;
+  $("tot").innerHTML = `${sgn(tot,2)} U` + (tot < 0 ? `<span class="pill hi">付出</span>` : tot > 0 ? `<span class="pill ok">收到</span>` : "");
+  $("onMargin").textContent = `${sgn(tot/(N/lev)*100,1)}%`;
+  $("note").innerHTML = `<strong>杠杆会放大资金费对本金的影响：</strong>同样的费率，${fmt(lev,0)} 倍杠杆下，持有 ${fmt(days,0)} 天收付的金额相当于保证金的 ${fmt(Math.abs(tot/(N/lev)*100),1)}%。拿得越久，这项成本越不能忽略。`;
+}
+function applyPreset(name){ for (const [k,v] of Object.entries(presets[name])) $(k).value = v;
+  document.querySelectorAll(".presets button").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.p===name))); render(); }
+document.querySelectorAll(".presets button").forEach(b=>b.addEventListener("click",()=>applyPreset(b.dataset.p)));
+$("f").addEventListener("input",()=>{document.querySelectorAll(".presets button").forEach(b=>b.setAttribute("aria-pressed","false"));render();});
+$("f").addEventListener("submit",e=>e.preventDefault());
+render();
+</script>
+
+</body></html>
